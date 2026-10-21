@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  cpu:
+    # The hosted runners have no GPU: build without CUDA and run the CPU renderer's tests (the GPU
+    # tests skip). The viewer is compiled too.
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Viewer dependencies (X11, OpenGL)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y xorg-dev libgl1-mesa-dev
+      - name: Configure
+        run: cmake -S . -B build -DPHOTON_CUDA=OFF -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: cmake --build build --config Release --parallel
+      - name: Tests
+        run: ctest --test-dir build -C Release --output-on-failure
+      - name: Render the built-in scenes
+        shell: bash
+        run: |
+          exe=build/photon; [ -f build/Release/photon.exe ] && exe=build/Release/photon.exe
+          $exe info
+          for s in cornell materials glass furnace; do $exe render $s --cpu --width 160 --height 90 --spp 4 --out $s.png; done
+          $exe export glass glass.gltf && $exe render glass.gltf --cpu --width 160 --height 90 --spp 2 --out glass_from_gltf.png
+
+  cuda:
+    # Compiles the CUDA renderer and the SVGF denoiser (no GPU to run them on).
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Jimver/cuda-toolkit@v0.2.19
+        with:
+          cuda: "12.6.0"
+          method: network
+          sub-packages: '["nvcc", "cudart"]'
+      - name: Configure
+        run: cmake -S . -B build -DPHOTON_VIEWER=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_CUDA_ARCHITECTURES="75;86;89"
+      - name: Build
+        run: cmake --build build --parallel
+      - name: Tests (CPU part; GPU tests skip without a device)
+        run: ctest --test-dir build --output-on-failure

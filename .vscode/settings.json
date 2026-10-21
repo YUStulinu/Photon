@@ -1,0 +1,18 @@
+{
+  "cmake.buildDirectory": "${workspaceFolder}/build",
+  "cmake.configureSettings": { "CMAKE_BUILD_TYPE": "Release" },
+  "C_Cpp.default.cppStandard": "c++20",
+  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+  "files.associations": {
+    "*.cu": "cuda-cpp",
+    "*.h": "cpp"
+  },
+  "files.exclude": {
+    "build*": true
+  },
+  "search.exclude": {
+    "build*": true,
+    "scenes/models": true,
+    "scenes/hdri": true
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Photon: configure",
+      "type": "shell",
+      "command": "cmake -S . -B build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Photon: build (release)",
+      "type": "shell",
+      "command": "cmake --build build --config Release --parallel",
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": ["$msCompile", "$gcc"]
+    },
+    {
+      "label": "Photon: test",
+      "type": "shell",
+      "command": "ctest --test-dir build -C Release --output-on-failure; ./build/Release/photon_tests -v",
+      "group": { "kind": "test", "isDefault": true },
+      "dependsOn": "Photon: build (release)",
+      "problemMatcher": []
+    },
+    {
+      "label": "Photon: viewer (materials)",
+      "type": "shell",
+      "command": "./build/Release/photon view materials",
+      "dependsOn": "Photon: build (release)",
+      "problemMatcher": []
+    },
+    {
+      "label": "Photon: viewer (current .gltf/.glb file)",
+      "type": "shell",
+      "command": "./build/Release/photon view \"${file}\"",
+      "problemMatcher": []
+    },
+    {
+      "label": "Photon: render the Cornell box (4096 spp)",
+      "type": "shell",
+      "command": "./build/Release/photon render cornell --width 720 --height 720 --spp 4096 --exposure 1.8 --out cornell.png",
+      "problemMatcher": []
+    },
+    {
+      "label": "Photon: benchmark (CPU vs GPU)",
+      "type": "shell",
+      "command": "./build/Release/photon bench",
+      "problemMatcher": []
+    },
+    {
+      "label": "Photon: download test models and HDRIs",
+      "type": "shell",
+      "command": "python scripts/fetch_models.py",
+      "problemMatcher": []
+    }
+  ]
+}

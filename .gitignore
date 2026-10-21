@@ -1,0 +1,25 @@
+# Build output
+/build/
+/build-*/
+/out/
+CMakeUserPresets.json
+
+# Downloaded assets (scripts/fetch_models.py)
+/scenes/models/
+/scenes/hdri/
+
+# Renders and screenshots made while working
+/*.png
+/*.pfm
+/photon_*.png
+/photon_*.pfm
+
+# Python
+__pycache__/
+
+# Editors and OS
+.vs/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db

@@ -1,0 +1,53 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Photon: viewer",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/Release/photon.exe",
+      "args": ["view", "materials"],
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "Photon: build (release)"
+    },
+    {
+      "name": "Photon: viewer on a glTF file",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/Release/photon.exe",
+      "args": ["view", "${input:model}", "--env", "scenes/hdri/studio_small_09_2k.hdr"],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Photon: tests",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/Release/photon_tests.exe",
+      "args": ["-v"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Photon: viewer (Linux, gdb)",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/photon",
+      "args": ["view", "materials"],
+      "cwd": "${workspaceFolder}",
+      "MIMode": "gdb"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "model",
+      "type": "pickString",
+      "description": "Model (download them with scripts/fetch_models.py)",
+      "options": [
+        "scenes/models/DamagedHelmet/DamagedHelmet.glb",
+        "scenes/models/FlightHelmet/FlightHelmet.gltf",
+        "scenes/models/Sponza/Sponza.gltf",
+        "scenes/models/DragonAttenuation/DragonAttenuation.glb"
+      ]
+    }
+  ]
+}
